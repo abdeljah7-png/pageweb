@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block principal %}
+<h1 style="text-align: center; background-color:aqua">Guide d'utilisation des applications</h1>
+
+<h1></h1>
+<h2 style="background-color: beige; color: blue;"> Application Reel et Verification
+</h2>
+<h4>1- Double cliquer sur la raccourci A3H sur le bureau (ou sur A3H-vp pour une verification ou une taxation)</h4>
+<h5>Cliquer sur "Fichier" puis sur "Creation de bureau de controle et de recette"</h5>
+<h5>Cliquer sur "Modifier" et remplir le formulaire (En arabe) puis "Valider" et "Quitter"</h5>
+
+<h5>
+    
+    GUIDE D’UTILISATION DU PROGRAMME REEL<br>
+
+1/Cliquer sur Fichier en haut et à quauche de l’ecran<br>
+2/ Cliquer sur Calcul vous obtenez l’ecran suivant avec les bouttons :<br>
+
+-	Nouveau : pour créer un nouveau fichier(nouveau contribuable)<br>
+-	Supprimer : supprimer un contribuable ; pour cela il suffit de selectionner le contribuable à effacer avec un click de souris sur la grille  puis appuyer sur le boutton supprimer<br>
+-	Vider la grille : permet de vider la totalité de la grille et par consequent initialiser tout le programme<br>
+-	Quitter : pour quitter l’ecran actuel<br>
+Pour commencer appuyer sur le boutton « Nouveau » <br>
+Vous recever l’ecran avec les bouttons suivants :<br>
+-	Créer ,Enregistere,Effacer,Quitter,Imprimer bulletin,Imprimer bordereau,Imprimer liquidation,Resumé(rec),Calcul impot,Detail impot,Tableau Tva,Tableau recap et un boutton option C.G.D(Enable).<br>
+I/Boutton Créer <br>
+
+Lorsque vous cliquez sur le boutton Créer vous obtenez l’ecran avec la date du jour (par defaut) qui est la date de calcul de pénalité que vous pouvez la changer (au format « jj/mm/aaaa ») <br>
+Dans cet ecran :<br>
+
+-	Choisir Commerçant ou prestataire ou industriel ou artisanat ou société dans le frame Choix<br>
+-	Le frame taux de pénalité apparaîtra : Choisir le taux de pénalité qui convient : Comptant,Constaté ou 0.0(amnistie :sans pénalité)<br>
+-	Le frame  Année de defaut apparaitra : Saisir l’année de defaut(ex : 2020 ,2019….Etc)<br>
+-	Un combo box apparaitra avec le titre Choix de l’impot : Vous y trouvez les impôts à calculer .<br>
+-	Clicker sur le flèche à droite et choisissez l’impot à calculer :<br>
+
+1/ Premier impot : impot sur le revenu  (الضريبة علئ الدخل ) :<br>
+L’ecran saisie des données relatives au calcul apparaît avec les differents bouttons ,pour cele suivez les instructions et saisir les données qui sont conformes à notre application RAFIC :<br>
+Saisir le chiffre d’affaire,le benéfice (ou le taux de benefice) et le chiffre declaré pour les verifications ,<br>
+Puis cocher les deductions communes : Chef de famille ,premier enfant deuxiemme enfant…..,parent à charge..et si enfant indicapé ou autre deduction saisir le dans autre en dinar tunisien.<br>
+Ensuite saisir les deductions  suivant le modele : Excedent (seulement pour la premiere année puis sera transferer automatiquement),la meme chose pour les accomptes (seulement la premiere année puis seront transferées automatiquement),retenue à la source ….etc ,pour autre :saisir d’autres deductions s’ils existent et ne sont pas mentionnées dans l’ecran.<br>
+Enfin cliquer sur la commande « Calcul d’impôt »<br>
+Vous obtenez  un message de majoration de l’impot s’il existe et puis l’ecran de calcul de redevance pour cet ecran de redevance apuyer sur la commande « Calcul » ensuite la commande « Enregistrer » Puis « Quitter »<br>
+Comme ça vous retournez à l’ecran précedent dans ce cas n’oubliez pas d’appuyer sur la commande « Save » pour enregistrer vos données,<br>
+Après vous appuyez sur la commande « Calcul des accomptes »<br>
+Le programme calcul les accomptes pour cela saisir les payements en dinar<br>
+Ce payement est egal à la somme des :retenue al source,le montant de l’acompte payé ….etc<br>
+Enfin appuyez sur la commande « Calcul des accomptes principal et pénalité »<br>
+Puis appuyez sur la commande « Enregistrer » et la commande « Quitter » pour quitter cet ecran et retourner à l’ecran précédente oû vous trouvez la commande <br>
+« Calcul d’impôt et pénalité » vous appuyez sur cette commande et ensuite sur la commande « Enregistrer » pour enregistrer toutes les données.<br>
+
+Conclusion :<br>
+
+Pour  l’impot sur le revenu et l’impot sur les socétes vous procedez de la meme maniere sauf pour les accomptes qui sont le deuxieme choix de l’impot dans le comb box on les calcul seulement pour la premiere fois car après il sont calculées automatiquement.<br>
+
+2 / Pour les impots mensuels :<br>
+Lorsque vous choisissez un impot dans le combo box vous obtenez un ecran avec les informations suivantes :<br>
+-	Tous les mois de l’année avec les periodes par jour et par mois <br>
+-	12 textbox intitulé « principal » oû vous saisissez le montant de principal par mois si neant laissez vide si ca demande un calcul vous double cliquez sur le textbox avec la souris vous obtenez l’ecran de calcul de chaque imôpt .Exemple si vous choisissez le tcl en doube cliquant sur le texbox « principal » vous avez un ecran de calcul de tcl pour cele vous saisissez le chiffre d’affaire par mois ou annuel et cliquez sur entrer(« Enter »)sur le chiffre annuel puis saisir le taux de tva puis entre(Enter ) enfin sur la commande « Calcul » le programme vous calcul le tcl de tous les mois en quittant cet ecran avec la commande « Quitter »vous trouvez tous les montants saisis dans les textbox principal ,Remarque ; vous pouvez changer le taux de TCL.<br>
+-	Apres vous saisissez les payements s’ils existent dans les textbox « payement »<br>
+-	Pour les mois que vous ne voulez pas les calculer mettez « N » dans les textbox « Decision ».<br>
+-	Enfin appuyez sur la commande « Calcul pénalité » vous aurez les penalites et le total pour tous les mois ,enregistrez toutes les informations en cliquant sur la commande « Enregistrez ».<br>
+Conclusion : Ainsi  vous faites la meme chose pour tous les impots mensuels et si vous voulez initialiser l’ecran appuyer sur « Nouveau ».<br>
+
+Remarque : Si vous n'avez pas le montant de principal "Double cliquer" sur un box principal pour le calculer:<br>
+    - Metter le chiffre d'affaire annuel et cliquer sur entrer<br>
+    - Si non doube cliquer sur un box pour faire le pointage , Metter le chiffre et Cliquer sur "Quitter"<br>
+    - Metter le taux de tva et cliquer sur entrer<br>
+    - Ensuite cliquer sur le boutton "calcul" Apres avoir verifier le taux d'imôpt et quitter<br>
+    - Ceci est valable pour la tva ,tcl, fodet, ...Etc<br>
+
+3/Si vous avez un impot qui n’existe pas dans la liste :<br>
+
+-	Selectionnez « Autre impot = اداءات اخرئ  dans le combo box choix d’impot vous aurez un ecran qui contient des text box pour cela remplir les information suivantes :<br>
+•	Saisir le nom de l’impot (par defaut  Reliquat)<br>
+•	Saisir le code de l’impot (par defaut 26027)<br>
+•	Cochez l’option « Mensuel ou trimestriel ou semestriel » si l’impot est mensuel ou trimestriel ou semestriel <br>
+•	Saisir l’échéance de l’impot dans cet format JJ/MM par ex :15/03 .<br>
+•	Appuyer sur la commande « Calcul » puis sur la commande « Enregistrer » et ensuite la commande « Quitter » si vous voulez quitter ou la commande « Nouveau » si vous avez un autre impot à calculer.<br>
+
+4/ Aprés avoir calculer tous les impots vous quittez  cet ecran et vous retournez vers l’ecran initial ou vous trouvez tous les bouttons précédentes ;<br>
+« Créer », »Enregistrer »,….etc mais il y a aussi le total de calcul et un nouveau boutton qui apparaît c’est la commande « Avance ».<br>
+Donc :<br>
+
+-	Si vous apuyez sur la commande « Enregistrer »(bien sur vous pouvez ecrire le nom du contribuable,la matricule fiscale,l’activité etl’adresse) vous enregistrez toutes les données relatives à ce contribuable.<br>
+-	Si vous appuyez sur la commande « Avance » vous obtenez un textbox vous saisissez l'avance en montant <br>ou vous passez au deuxiemme box avec un label en % là vous saisissez le pourcentage par exemple 20(c'est-à-dire 20 pour cent).<br>
+-	Dans ce cas vous pouvez imprimer tous les etats correspendants :<br>
+•	Bulletin de versement pour l’avance<br>
+•	Bordereau de constatation pour le reste (la RS est toute seule)<br>
+•	Bulletin de liquidation<br>
+•	La reconnaissance<br>
+•	Etat pour memorial<br>
+
+Remarque :<br>
+
+Pour les verifications (Approfondie,preleminaires,…etc) vous pouvez imprimer :<br>
+-	Calcul d’impot avec le boutton « Calcul d’impot »<br>
+-	Detail de calcul pour les personnes physiques avec le boutton « Detail de calcul »<br>
+-	Tableau de tava avec le boutton « Tableau Tva »<br>
+-	Resultat definitif avec le boutton « Tableau recap »<br>
+-	Le pointage<br>
+-	Details mensuels<br>
+-	Enfin tous les bouttons sont valables ...<br>
+
+Enfin vous pouvez enregistrez et quitter cet ecran et vous retournez au premier ecran qui contient tous les contribuabes dans une grille ( tableau),lorsque vous voulez consultez un contribuable il suffit de doube cliquez sue la ligne qui contient le contribuable avec la souris vous aurez toutes les données qu’on a parlé.<br>
+Cet ecran contient la commande « »Supprimer «  qui permet de supprimer ub contribuable pour cela il suffit de selectionner ce contribuable en cliquant sur la ligne qui contient ce contribuable puis le boutton « Supprimer »,le boutton « Vider la grille » supprime tous les contribuables.<br>
+</h5>
+<h2 style="background-color: beige; color: blue;"> Application Forfait
+</h2>
+<h3>1- Double click sur la raccourci A3H-forf sur le bureau</h3>
+<h5>Cliquer sur "Fichier" puis sur "Creation de bureau de controle et de recette"</h5>
+<h5>Cliquer sur "Modifier" et remplir le formulaire (En arabe) puis "Valider" et "Quitter"</h5>
+<h5>Faire la meme chose pour les applications réelles(A peu près)</h5>
+{% endblock %}

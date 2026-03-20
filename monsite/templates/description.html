@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block principal %}
+<h1 style="text-align: center; background-color:aqua">Installation des applications</h1>
+<h2 style="background-color: beige; color: blue;"> Application Forfait
+</h2>
+<h4>
+<li>Copier le sous repertoire "reper" du repertoire "instal" sur un lecteur de disque c: ou d: etc...</li>
+<li>Entrer dans le repertoire "reper' sur le disque local et créer un raccourci du fichier "a3h-forf" sur le bureau</li>
+
+</h4>
+
+<h2 style="background-color: beige; color: blue;"> Application Reel
+</h2>
+<h4>
+<li>Copier le sous repertoire "calreel" du repertoire "instal" sur un lecteur de disque c: ou d: etc...</li>
+<li>Entrer dans le repertoire "calreel' sur le disque local et créer un raccourci du fichier "a3h" sur le bureau</li>
+
+</h4>
+<h2 style="background-color: beige; color: blue;"> Application Verification
+</h2>
+<h4>
+<li>Copier le sous repertoire "vp" du repertoire "instal" sur un lecteur de disque c: ou d: etc...</li>
+<li>Entrer dans le repertoire "vp' sur le disque local et créer un raccourci du fichier "a3h-vp" sur le bureau</li>
+
+<h2 style="background-color: beige; color: blue;"> Dernières étapes
+</h2>
+<h4>
+<li>Lancer le fichier "setup" du sous repertoire setup du repertoire "instal"</li>
+<li>Lancer le fichier "setup" du sous repertoire setupforfait du repertoire "instal"</li>
+<li>Lancer le fichier "setup" du sous repertoire setupreel du repertoire "instal"</li>
+
+
+
+</h4>
+
+<br>  '        '          </br>
+
+<a href="{% url 'download_dossier' %}" 
+   style="background-color: blue;margin-left: 4cm ;;  color: azure; font-size: large; padding: 10px; text-decoration: none; border-radius: 5px;">
+      Télécharger le dossier instal
+</a>
+<br>  '        '          </br>
+<br>  '        '          </br>
+{% endblock %}

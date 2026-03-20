@@ -1,0 +1,75 @@
+
+
+
+
+https://mega.nz/fm/aIAGDTZb
+
+https://mega.nz/folder/zQpV0CxZ#mlwDuJ3IJh8GslcHtHroOg
+
+
+
+
+
+
+
+
+
+PIiAMSMqx_EdJT0qh2os5Q
+
+
+
+https://mega.nz/folder/YYg0VAIL#4iTy3QeapkOtoQv2t00lFw
+
+
+
+mot de passe heruko:E7V5P$Ua;Vc6Vni
+
+deployer un projet django sur heroku
+Ici est une partie d'un tuto sur youtube ou je vous montre comment deployer un project django en moins de 15 minites.
+
+1-CREER VOTRE DJANGO
+Assurez vous que l'environnemetn virtual est active si vous en avez.
+
+2-INSTALLER psycopg2, gunicorn, django-heroku, dj_database_url
+
+3-CREER LE FICHIER runtime.txt
+
+4-CREER LE FICHIER Procfile sans extension
+
+5-GENERER Le fichier requirements.txt Rassenble tout vous pakage dans le fichier requirements.txt grace a la commade suivanate. pip freeze > requirements.txt
+
+6-METTRE TON PROJECT SUR GIT
+
+INSTALLER GIT https://www.atlassian.com/git/tutorials/install-git
+
+--CREER UN CONPTE SUR HEROKU
+
+https://signup.heroku.com/
+
+--DOWNLOAD HEROKU CLI
+https://devcenter.heroku.com/articles/heroku-cli
+
+--CONFIGURER DJANGO HEROKU
+https://devcenter.heroku.com/articles/django-app-configuration
+
+POUR AVOIR LA CONFIGURATION DU WHITENOISE https://whitenoise.evans.io/en/stable/django.html
+
+DANS LE TERMINAL TAPEZ CES COMMANDES:
+git init
+git add .
+git commint -m "premier commit"
+heroku login
+heroku create nom_du_domain
+git push heroku master
+heroku run python manage.py migrate
+heroku open
+
+dans le setting DEBUG=False
+
+si vous faite des modification sur votre application la seul chose a faire c'est de taper ces lignes de commande:
+git init
+git add .
+git commint -m "expliquer en quelques mots la modification ici"
+git push heroku master
+
+
