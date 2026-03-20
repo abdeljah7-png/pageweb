@@ -1,13 +1,9 @@
 from django.urls import path
-from .views import home,description,utilisation
-from . import views
-
+from .views import home, description, utilisation, download_dossier
 
 urlpatterns = [
-    path('utilisation', views.utilisation, name='utilisation'),
-    path('', views.home, name='home'),
-    path('description/', views.description, name='description'),
-    path('telecharger/', views.download_dossier, name='download_dossier'),
-
+    path('', home, name='home'),
+    path('description/', description, name='description'),
+    path('utilisation/', utilisation, name='utilisation'),  # <-- slash ajouté
+    path('telecharger/', download_dossier, name='download_dossier'),
 ]
-
