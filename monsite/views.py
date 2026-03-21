@@ -13,7 +13,7 @@ def utilisation(request):
     return render(request, 'utilisation.html')
 
 def download_dossier(request):
-    file_path = os.path.join(settings.MEDIA_ROOT, 'downloads', 'INSTAL.zip')
+    file_path = os.path.join(settings.STATIC_ROOT, 'downloads', 'INSTAL.zip')
 
     if os.path.exists(file_path):
         return FileResponse(open(file_path, 'rb'), as_attachment=True, filename='INSTAL.zip')
