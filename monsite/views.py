@@ -13,9 +13,9 @@ def utilisation(request):
     return render(request, 'utilisation.html')
 
 def download_dossier(request):
-    file_path = os.path.join(settings.STATIC_ROOT, 'downloads', 'INSTAL.zip')
+    file_path = os.path.join(settings.STATIC_ROOT, 'downloads', 'instal.zip')
 
     if os.path.exists(file_path):
-        return FileResponse(open(file_path, 'rb'), as_attachment=True, filename='INSTAL.zip')
+        return FileResponse(open(file_path, 'rb'), as_attachment=True, filename='instal.zip')
     else:
         return HttpResponse("Fichier introuvable", status=404)
