@@ -1,24 +1,23 @@
 from django.shortcuts import render
-from django.http import FileResponse, Http404
 from django.conf import settings
 import os
 from django.http import FileResponse, Http404, HttpResponse
+from django.contrib.auth.decorators import login_required
 
 
-
-
+@login_required
 def home(request):
     return render(request, 'home.html')
 
-
+@login_required
 def description(request):
     return render(request, 'description.html')
 
-
+@login_required
 def utilisation(request):
     return render(request, 'utilisation.html')
 
-
+@login_required
 def download_dossier(request):
     file_path = os.path.join(settings.STATIC_ROOT, 'downloads', 'instal.zip')
 
