@@ -1,0 +1,50 @@
+{% extends "remarques/base.html" %}
+{% block title %}Nouvelle remarque{% endblock %}
+{% block content %}
+<h1>Nouvelle remarque</h1>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div class="carte">
+    <p class="muet">Seuls les trois premiers champs sont obligatoires. Les détails ci-dessous nous aident à refaire le cas, mais ils sont facultatifs.</p>
+    {% for f in form.visible_fields %}
+      {% if f.name == "nom_agent" or f.name == "module" or f.name == "type_remarque" or f.name == "description" or f.name == "impact" %}
+        <div class="champ">{{ f.label_tag }}{{ f }}{{ f.errors }}</div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <details {% if form.errors %}open{% endif %}>
+    <summary>Détails pour m'aider à reproduire (facultatif)</summary>
+    <div id="groupes">
+    {% for g in form.groupes %}
+      <fieldset data-types="{{ g.types }}">
+        <legend>{{ g.titre }}</legend>
+        {% for f in g.champs %}
+          <div class="champ">
+            {{ f.label_tag }}{{ f }}
+            {% if f.help_text %}<small>{{ f.help_text }}</small>{% endif %}
+            {{ f.errors }}
+          </div>
+        {% endfor %}
+      </fieldset>
+    {% endfor %}
+    </div>
+  </details>
+  <button class="bouton vert" type="submit">Envoyer ma remarque</button>
+</form>
+<script>
+(function () {
+  var type = document.getElementById("id_type_remarque");
+  var groupes = document.querySelectorAll("#groupes fieldset");
+  function maj() {
+    for (var i = 0; i < groupes.length; i++) {
+      var t = groupes[i].getAttribute("data-types");
+      var visible = t === "*" || !type.value || ("," + t + ",").indexOf("," + type.value + ",") !== -1;
+      groupes[i].style.display = visible ? "" : "none";
+    }
+  }
+  if (type) { type.onchange = maj; maj(); }
+})();
+</script>
+{% endblock %}

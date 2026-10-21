@@ -1,0 +1,17 @@
+{% extends "remarques/base.html" %}
+{% block content %}
+<h1>Vos remarques font évoluer A3H</h1>
+<div class="carte">
+  <p>Vous avez trouvé une erreur de calcul, un écart d'arrondi, un cas particulier mal traité, un formulaire défaillant, ou vous avez une idée pour gagner du temps ? Dites-le ici : cela prend 30 secondes.</p>
+  <p><a class="bouton vert" href="{% url 'remarques:nouvelle' %}">Écrire une remarque</a></p>
+</div>
+{% if profil %}
+  <div class="carte">
+    <p>Bonjour <b>{{ profil.nom_agent }}</b> ({{ profil.bureau }}).</p>
+    <p>Vous avez envoyé <b>{{ nb_total }}</b> remarque{{ nb_total|pluralize }}{% if nb_total %}, dont <b>{{ nb_reponses }}</b> déjà étudiée{{ nb_reponses|pluralize }}{% endif %}.
+       <a href="{% url 'remarques:mes' %}">Voir le suivi</a></p>
+  </div>
+{% else %}
+  <div class="avert">Première visite : <a href="{% url 'remarques:profil' %}">indiquez votre bureau</a> (une seule fois).</div>
+{% endif %}
+{% endblock %}

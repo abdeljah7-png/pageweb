@@ -22,6 +22,7 @@ from django.conf.urls.static import static  # <--- déjà présent si tu servais
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('monsite.urls')),
+    path("remarques/", include("remarques.urls")),
 ]
 
 if settings.DEBUG:  # seulement en développement

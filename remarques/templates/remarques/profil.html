@@ -1,0 +1,40 @@
+{% extends "remarques/base.html" %}
+{% block title %}Mon profil{% endblock %}
+{% block content %}
+<h1>Mon profil d'agent</h1>
+<p class="muet">À remplir une seule fois. Ces informations nous aident à comprendre votre contexte de travail ; elles seront jointes à vos remarques.</p>
+<form method="post" class="carte">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
+  {{ form.non_field_errors }}
+  {% for f in form %}
+    <div class="champ">
+      {{ f.label_tag }}{{ f }}
+      {% if f.help_text %}<small>{{ f.help_text }}</small>{% endif %}
+      {{ f.errors }}
+    </div>
+  {% endfor %}
+  <button class="bouton" type="submit">Enregistrer</button>
+</form>
+{{ bureaux_par_centre|json_script:"bpc" }}
+<script>
+(function () {
+  var centre = document.getElementById("id_centre"), bureau = document.getElementById("id_bureau");
+  if (!centre || !bureau) return;
+  var data = JSON.parse(document.getElementById("bpc").textContent);
+  var choisi = bureau.value;
+  function remplir() {
+    var liste = data[centre.value] || [];
+    bureau.innerHTML = "";
+    var o = document.createElement("option"); o.value = ""; o.text = "Choisir le bureau"; bureau.appendChild(o);
+    for (var i = 0; i < liste.length; i++) {
+      var op = document.createElement("option"); op.value = liste[i][0]; op.text = liste[i][1];
+      if (String(liste[i][0]) === String(choisi)) op.selected = true;
+      bureau.appendChild(op);
+    }
+  }
+  centre.onchange = function () { choisi = ""; remplir(); };
+  if (centre.value) remplir();
+})();
+</script>
+{% endblock %}

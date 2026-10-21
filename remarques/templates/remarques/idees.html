@@ -1,0 +1,27 @@
+{% extends "remarques/base.html" %}
+{% block title %}Idées des collègues{% endblock %}
+{% block content %}
+<h1>Idées des collègues</h1>
+<p class="muet">Une idée vous parle aussi ? Cliquez sur « Moi aussi » au lieu de la réécrire : les idées les plus demandées passent en premier.</p>
+{% for r in idees %}
+<div class="carte">
+  <div style="display:flex;gap:14px;align-items:flex-start">
+    <div style="text-align:center;min-width:60px"><div class="chiffre">{{ r.demandes }}</div><small class="muet">demande{{ r.demandes|pluralize }}</small></div>
+    <div style="flex:1">
+      <p dir="auto" style="margin-top:0;white-space:pre-wrap">{{ r.description }}</p>
+      <p class="muet">{{ r.module }} · <span class="etiquette st-{{ r.statut }}">{{ r.get_statut_display }}</span>
+        {% if r.version_correction %}· version {{ r.version_correction }}{% endif %}</p>
+      {% if r.reponse %}<div class="reponse" dir="auto" style="white-space:pre-wrap">{{ r.reponse }}</div>{% endif %}
+      {% if r.est_la_mienne %}<small class="muet">C'est votre idée.</small>
+      {% else %}
+      <form method="post" action="{% url 'remarques:moi_aussi' r.pk %}">{% csrf_token %}
+        <button class="bouton petit {% if r.a_vote %}gris{% endif %}" type="submit">{% if r.a_vote %}Retirer mon « moi aussi »{% else %}Moi aussi{% endif %}</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% empty %}
+<div class="carte">Aucune idée pour le moment.</div>
+{% endfor %}
+{% endblock %}

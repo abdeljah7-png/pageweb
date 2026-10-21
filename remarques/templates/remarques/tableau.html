@@ -1,0 +1,36 @@
+{% extends "remarques/base.html" %}
+{% block title %}Tableau de bord{% endblock %}
+{% block content %}
+<h1>Tableau de bord</h1>
+<div class="grille">
+  <div class="carte"><div class="chiffre">{{ total }}</div>remarques reçues</div>
+  <div class="carte"><div class="chiffre">{{ a_traiter }}</div>à traiter (nouvelles)</div>
+  <div class="carte"><div class="chiffre">{{ nb_cas_test }}</div>cas de test</div>
+</div>
+
+<div class="grille">
+  <div><h2>Par statut</h2><table>{% for l in par_statut %}<tr><td>{{ l.libelle }}</td><td>{{ l.n }}</td></tr>{% empty %}<tr><td>Aucune donnée</td></tr>{% endfor %}</table></div>
+  <div><h2>Par type</h2><table>{% for l in par_type %}<tr><td>{{ l.libelle }}</td><td>{{ l.n }}</td></tr>{% empty %}<tr><td>Aucune donnée</td></tr>{% endfor %}</table></div>
+</div>
+<div class="grille">
+  <div><h2>Par module</h2><table>{% for l in par_module %}<tr><td>{{ l.libelle }}</td><td>{{ l.n }}</td></tr>{% empty %}<tr><td>Aucune donnée</td></tr>{% endfor %}</table></div>
+  <div><h2>Par centre</h2><table>{% for l in par_centre %}<tr><td>{{ l.libelle }}</td><td>{{ l.n }}</td></tr>{% empty %}<tr><td>Aucune donnée</td></tr>{% endfor %}</table></div>
+</div>
+<h2>Par bureau</h2>
+<table>{% for l in par_bureau %}<tr><td>{{ l.libelle }}</td><td>{{ l.n }}</td></tr>{% empty %}<tr><td>Aucune donnée</td></tr>{% endfor %}</table>
+
+<h2>Idées les plus demandées</h2>
+<table>
+  {% for r in idees_top %}<tr><td style="width:70px"><b>{{ r.demandes }}</b></td><td dir="auto"><a href="{% url 'remarques:detail' r.pk %}">{{ r.titre }}</a></td><td>{{ r.module }}</td></tr>
+  {% empty %}<tr><td>Aucune idée pour le moment</td></tr>{% endfor %}
+</table>
+
+<h2>Dernières remarques</h2>
+<table>
+  {% for r in recentes %}<tr>
+    <td>{{ r.created_at|date:"d/m H:i" }}</td><td>{{ r.get_type_remarque_display }}</td><td>{{ r.module }}</td>
+    <td>{{ r.bureau }}</td><td dir="auto"><a href="{% url 'remarques:detail' r.pk %}">{{ r.titre }}</a></td>
+    <td><span class="etiquette st-{{ r.statut }}">{{ r.get_statut_display }}</span></td></tr>
+  {% empty %}<tr><td>Aucune remarque</td></tr>{% endfor %}
+</table>
+{% endblock %}

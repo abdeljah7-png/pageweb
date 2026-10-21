@@ -1,0 +1,31 @@
+{% extends "remarques/base.html" %}
+{% block title %}Remarque {{ r.pk }}{% endblock %}
+{% block content %}
+<h1>Remarque n°{{ r.pk }}</h1>
+<div class="carte">
+  <p><span class="etiquette st-{{ r.statut }}">{{ r.get_statut_display }}</span>
+     {% if r.version_correction %} Traitée dans la version <b>{{ r.version_correction }}</b>{% endif %}</p>
+  <p class="muet">{{ r.get_type_remarque_display }} · {{ r.module }} · {{ r.created_at|date:"d/m/Y H:i" }}
+    {% if voir_details %}· {{ r.nom_agent }}, {{ r.bureau }}{% endif %}
+    {% if r.impact %}· {{ r.get_impact_display }}{% endif %}</p>
+  <p dir="auto" style="white-space:pre-wrap">{{ r.description }}</p>
+  {% if voir_details %}
+    {% with champs=r.champs_renseignes %}
+      {% if champs %}
+      <table>
+        {% for libelle, valeur in champs %}<tr><th style="width:35%">{{ libelle }}</th><td dir="auto" style="white-space:pre-wrap">{{ valeur }}</td></tr>{% endfor %}
+      </table>
+      {% endif %}
+    {% endwith %}
+    {% if r.capture %}<p><a href="{% url 'remarques:capture' r.pk %}" target="_blank">Voir la capture d'écran</a></p>{% endif %}
+  {% endif %}
+</div>
+{% if r.reponse and voir_details %}<div class="reponse"><b>Réponse :</b><br><span dir="auto" style="white-space:pre-wrap">{{ r.reponse }}</span></div>{% endif %}
+{% if r.type_remarque == "idee" and not proprietaire %}
+  <form method="post" action="{% url 'remarques:moi_aussi' r.pk %}">{% csrf_token %}
+    <input type="hidden" name="next" value="{% url 'remarques:detail' r.pk %}">
+    <button class="bouton {% if a_vote %}gris{% endif %}" type="submit">{% if a_vote %}Retirer mon « moi aussi »{% else %}Moi aussi, j'en ai besoin{% endif %}</button>
+  </form>
+{% endif %}
+{% if user.is_staff %}<p><a href="{% url 'admin:remarques_remarque_change' r.pk %}">Ouvrir dans l'administration</a></p>{% endif %}
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{# Les pages du module s'affichent dans le gabarit du site (bloc "principal"). #}
+{# Si le bloc de votre base.html porte un autre nom, changez-le ici (2 endroits). #}
+{% block principal %}
+<style>
+  .a3h-rem { max-width: 900px; margin: 0 auto; padding: 0 4px 30px; font-size: 16px; }
+  .a3h-rem .sousmenu { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 18px; padding: 8px; background: #eef2f6; border-radius: 8px; }
+  .a3h-rem .sousmenu a { padding: 5px 12px; border-radius: 6px; text-decoration: none; color: #1f2d3d; background: #fff; border: 1px solid #d8dee4; }
+  .a3h-rem .sousmenu a:hover { background: #cfe3f5; }
+  .a3h-rem h1 { font-size: 24px; margin: 8px 0 16px; }
+  .a3h-rem h2 { font-size: 18px; margin: 22px 0 8px; }
+  .a3h-rem .carte { background: #fff; border: 1px solid #d8dee4; border-radius: 8px; padding: 16px 18px; margin-bottom: 14px; }
+  .a3h-rem .champ { margin-bottom: 12px; }
+  .a3h-rem .champ label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .a3h-rem .champ small { display: block; color: #5b6b79; margin-top: 3px; }
+  .a3h-rem input[type=text], .a3h-rem input[type=date], .a3h-rem select, .a3h-rem textarea, .a3h-rem input[type=file] { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #b7c2cc; border-radius: 5px; font-size: 16px; font-family: inherit; }
+  .a3h-rem textarea { resize: vertical; }
+  .a3h-rem .bouton { display: inline-block; background: #0d6efd; color: #fff; border: 0; padding: 10px 18px; border-radius: 6px; font-size: 16px; text-decoration: none; cursor: pointer; }
+  .a3h-rem .bouton.vert { background: #198754; }
+  .a3h-rem .bouton.gris { background: #6c757d; }
+  .a3h-rem .bouton.petit { padding: 5px 10px; font-size: 14px; }
+  .a3h-rem .errorlist { color: #b02a37; margin: 4px 0; padding: 0; list-style: none; }
+  .a3h-rem .message { padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; background: #d1e7dd; border: 1px solid #a3cfbb; }
+  .a3h-rem .message.info { background: #cff4fc; border-color: #9eeaf9; }
+  .a3h-rem .message.error { background: #f8d7da; border-color: #f1aeb5; }
+  .a3h-rem details { background: #fff; border: 1px solid #d8dee4; border-radius: 8px; padding: 10px 18px; margin: 14px 0; }
+  .a3h-rem summary { cursor: pointer; font-weight: 600; }
+  .a3h-rem fieldset { border: 1px dashed #b7c2cc; border-radius: 6px; margin: 12px 0; padding: 8px 14px; }
+  .a3h-rem legend { float: none; width: auto; font-size: 16px; font-weight: 600; padding: 0 6px; margin: 0; color: #1f2d3d; }
+  .a3h-rem table { border-collapse: collapse; width: 100%; background: #fff; }
+  .a3h-rem th, .a3h-rem td { border: 1px solid #d8dee4; padding: 7px 10px; text-align: left; vertical-align: top; }
+  .a3h-rem th { background: #eef2f6; }
+  .a3h-rem .etiquette { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 13px; background: #e2e8ee; }
+  .a3h-rem .st-nouvelle { background: #fff3cd; } .a3h-rem .st-corrigee, .a3h-rem .st-calcul_correct { background: #d1e7dd; }
+  .a3h-rem .st-refusee { background: #e2e3e5; } .a3h-rem .st-planifiee, .a3h-rem .st-reproduite { background: #cfe2ff; }
+  .a3h-rem .reponse { background: #e8f4ec; border-left: 4px solid #198754; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
+  .a3h-rem .avert { background: #fff3cd; border: 1px solid #ffe69c; padding: 8px 12px; border-radius: 6px; margin: 8px 0; font-size: 15px; }
+  .a3h-rem .grille { display: flex; flex-wrap: wrap; gap: 14px; }
+  .a3h-rem .grille > div { flex: 1 1 260px; }
+  .a3h-rem .chiffre { font-size: 30px; font-weight: 700; }
+  .a3h-rem .muet { color: #5b6b79; }
+</style>
+<div class="a3h-rem">
+  <div class="sousmenu">
+    <a href="{% url 'remarques:accueil' %}">Accueil remarques</a>
+    <a href="{% url 'remarques:nouvelle' %}">Nouvelle remarque</a>
+    <a href="{% url 'remarques:mes' %}">Mes remarques</a>
+    <a href="{% url 'remarques:idees' %}">Idées des collègues</a>
+    <a href="{% url 'remarques:profil' %}">Mon profil</a>
+    {% if user.is_staff %}
+      <a href="{% url 'remarques:tableau' %}">Tableau de bord</a>
+      <a href="{% url 'admin:remarques_remarque_changelist' %}">Administration</a>
+    {% endif %}
+  </div>
+  {% for m in messages %}<div class="message {{ m.tags }}">{{ m }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</div>
+{% endblock %}

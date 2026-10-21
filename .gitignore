@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+captures_privees/
+captures_test/
+static/install/
