@@ -1,17 +1,57 @@
 {% extends "remarques/base.html" %}
 {% block content %}
-<h1>Vos remarques font évoluer A3H</h1>
-<div class="carte">
-  <p>Vous avez trouvé une erreur de calcul, un écart d'arrondi, un cas particulier mal traité, un formulaire défaillant, ou vous avez une idée pour gagner du temps ? Dites-le ici : cela prend 30 secondes.</p>
-  <p><a class="bouton vert" href="{% url 'remarques:nouvelle' %}">Écrire une remarque</a></p>
+<section class="hero">
+  {% if profil %}<p class="muet" style="margin:0">Bonjour {{ profil.nom_agent }} · {{ profil.bureau }}</p>{% endif %}
+  <h1>{% if profil %}Merci {{ profil.nom_agent }} !{% else %}Bienvenue !{% endif %} Vous savez ce qui peut améliorer A3H.</h1>
+  <p>{{ message }}</p>
+  {% if nb_non_lues %}<div class="alerte-reponse"><b>{{ nb_non_lues }} nouvelle{{ nb_non_lues|pluralize }} réponse{{ nb_non_lues|pluralize }}</b> à vos remarques. <a href="{% url 'remarques:mes' %}">Les lire</a></div>{% endif %}
+  {% if profil %}
+    <a class="bouton ambre" href="{% url 'remarques:nouvelle' %}">+ Écrire une remarque</a>
+    <span class="muet" style="margin-left:10px">30 secondes suffisent.</span>
+  {% else %}
+    <div class="avert">Première visite : <a href="{% url 'remarques:profil' %}">indiquez votre bureau</a> (une seule fois), puis écrivez votre première remarque.</div>
+  {% endif %}
+</section>
+
+<h2>Votre impact</h2>
+<div class="tuiles">
+  <div class="tuile"><div class="chiffre">{{ nb_total }}</div>remarque{{ nb_total|pluralize }} envoyée{{ nb_total|pluralize }}</div>
+  <div class="tuile"><div class="chiffre">{{ nb_traitees }}</div>étudiée{{ nb_traitees|pluralize }} par l'équipe</div>
+  <div class="tuile or"><div class="chiffre">{{ nb_retenues }}</div>retenue{{ nb_retenues|pluralize }} pour A3H</div>
 </div>
-{% if profil %}
-  <div class="carte">
-    <p>Bonjour <b>{{ profil.nom_agent }}</b> ({{ profil.bureau }}).</p>
-    <p>Vous avez envoyé <b>{{ nb_total }}</b> remarque{{ nb_total|pluralize }}{% if nb_total %}, dont <b>{{ nb_reponses }}</b> déjà étudiée{{ nb_reponses|pluralize }}{% endif %}.
-       <a href="{% url 'remarques:mes' %}">Voir le suivi</a></p>
-  </div>
-{% else %}
-  <div class="avert">Première visite : <a href="{% url 'remarques:profil' %}">indiquez votre bureau</a> (une seule fois).</div>
-{% endif %}
+{% if nb_total %}<p><a href="{% url 'remarques:mes' %}">Voir le suivi de mes remarques →</a></p>{% endif %}
+
+<h2>Vos étoiles <span class="muet" style="font-weight:400;font-size:15px">({{ nb_badges }} sur {{ badges|length }})</span></h2>
+<div class="badges">
+  {% for b in badges %}
+    <div class="badge {% if b.ok %}ok{% endif %}"><b>{{ b.titre }}</b><small>{{ b.texte }}</small></div>
+  {% endfor %}
+</div>
+
+<h2>Ce qui a changé grâce à vous</h2>
+{% for r in apports %}
+  <div class="changement"><b dir="auto">{{ r.resume_public }}</b><small>signalé par {{ r.credit }}</small></div>
+{% empty %}
+  <div class="carte muet">Les corrections issues de vos remarques apparaîtront ici. La première pourrait être la vôtre.</div>
+{% endfor %}
+<p><a href="{% url 'remarques:nouveautes' %}">Voir toutes les nouveautés d'A3H →</a></p>
+
+<h2>Ensemble</h2>
+<div class="commun">
+  <div><span class="chiffre">{{ communaute.agents }}</span><small>agent{{ communaute.agents|pluralize }} contributeur{{ communaute.agents|pluralize }}</small></div>
+  <div><span class="chiffre">{{ communaute.remarques }}</span><small>remarque{{ communaute.remarques|pluralize }} reçue{{ communaute.remarques|pluralize }}</small></div>
+  <div><span class="chiffre">{{ communaute.corrigees }}</span><small>corrigée{{ communaute.corrigees|pluralize }} dans A3H</small></div>
+  <p>
+    {% if derniere_version %}Dernière version : <b>{{ derniere_version.numero }}</b> ({{ derniere_version.date|date:"d/m/Y" }}).{% endif %}
+
+  </p>
+</div>
+
+<h2>Que voulez-vous signaler ?</h2>
+<div class="types">
+  {% for t in tuiles %}
+    <a class="type-tuile" style="--couleur: {{ t.couleur }}" href="{% url 'remarques:nouvelle' %}?type={{ t.code }}"><b>{{ t.titre }}</b><span>{{ t.texte }}</span></a>
+  {% endfor %}
+</div>
+<p class="muet">Ne saisissez jamais de nom ni de numéro de contribuable réel : le code impôt et les montants suffisent.</p>
 {% endblock %}

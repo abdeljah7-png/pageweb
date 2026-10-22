@@ -56,7 +56,7 @@ class RemarqueForm(forms.ModelForm):
             "resultat_obtenu", "resultat_attendu", "source_attendu",
             "montant_concerne", "regle_arrondi",
             "situation", "date_evenement", "date_calcul", "a3h_a_fait", "aurait_du",
-            "ecran", "version_a3h", "capture",
+            "ecran", "version_a3h", "capture", "accepte_credit",
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 5}),
@@ -76,7 +76,7 @@ class RemarqueForm(forms.ModelForm):
         ("La situation du dossier", ["situation"],
          ["situation", "date_evenement", "date_calcul", "a3h_a_fait", "aurait_du"]),
         ("Le formulaire", ["formulaire"], ["ecran"]),
-        ("Pour finir", None, ["version_a3h", "capture"]),
+        ("Pour finir", None, ["version_a3h", "capture"]),  # accepte_credit : affiché à part
     ]
 
     def __init__(self, *args, **kwargs):

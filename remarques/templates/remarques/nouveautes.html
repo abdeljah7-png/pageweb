@@ -1,0 +1,20 @@
+{% extends "remarques/base.html" %}
+{% block title %}Nouveautés d'A3H{% endblock %}
+{% block content %}
+<h1>Nouveautés d'A3H</h1>
+<p class="muet">Chaque version d'A3H, et ce qu'elle doit à vos remarques.</p>
+{% for v in versions %}
+<div class="version">
+  <h2>Version {{ v.numero }} <small class="muet" style="font-weight:400">du {{ v.date|date:"d/m/Y" }}</small></h2>
+  {% if v.notes %}<p dir="auto" style="white-space:pre-wrap">{{ v.notes }}</p>{% endif %}
+  {% if v.nb_traitees %}
+    <p><b>{{ v.nb_traitees }}</b> remarque{{ v.nb_traitees|pluralize }} d'agents {% if v.nb_traitees == 1 %}a été traitée{% else %}ont été traitées{% endif %} dans cette version.</p>
+  {% endif %}
+  {% for a in v.apports %}
+    <div class="changement"><b dir="auto">{{ a.resume_public }}</b><small>signalé par {{ a.credit }}</small></div>
+  {% endfor %}
+</div>
+{% empty %}
+<div class="carte">La première version publiée avec vos remarques apparaîtra ici.</div>
+{% endfor %}
+{% endblock %}

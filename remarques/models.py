@@ -241,6 +241,18 @@ class Remarque(models.Model):
     )
     note_interne = models.TextField("Note interne (non visible par l'agent)", blank=True)
 
+    # Reconnaissance et suivi de lecture
+    resume_public = models.TextField(
+        "Résumé public de la correction", blank=True,
+        help_text="Une phrase visible par tous les agents, dans « Ce qui a changé grâce à vous ». "
+                  "N'y mettez aucune donnée de contribuable.",
+    )
+    accepte_credit = models.BooleanField(
+        "J'accepte d'être cité(e) par mon nom si ma remarque améliore A3H", default=False
+    )
+    reponse_modifiee_le = models.DateTimeField(null=True, blank=True, editable=False)
+    vue_par_agent_le = models.DateTimeField(null=True, blank=True, editable=False)
+
     created_at = models.DateTimeField("Reçue le", auto_now_add=True)
     updated_at = models.DateTimeField("Mise à jour le", auto_now=True)
 
@@ -249,6 +261,20 @@ class Remarque(models.Model):
 
     def __str__(self):
         return "#%s %s" % (self.pk, self.titre)
+
+    @property
+    def non_lue(self):
+        """Vrai si l'administrateur a répondu ou changé le statut depuis la dernière lecture de l'agent."""
+        if not self.reponse_modifiee_le:
+            return False
+        return self.vue_par_agent_le is None or self.vue_par_agent_le < self.reponse_modifiee_le
+
+    @property
+    def credit(self):
+        """Nom cité publiquement : le bureau, et l'agent seulement s'il a donné son accord."""
+        if self.accepte_credit:
+            return "%s, %s" % (self.nom_agent, self.bureau.nom)
+        return "Bureau %s" % self.bureau.nom
 
     @property
     def titre(self):

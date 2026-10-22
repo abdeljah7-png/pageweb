@@ -31,6 +31,11 @@
     {% endfor %}
     </div>
   </details>
+  <div class="case-credit">
+    {{ form.accepte_credit }}
+    <label for="{{ form.accepte_credit.id_for_label }}" style="margin:0">{{ form.accepte_credit.label }}.
+      <small class="muet" style="display:block">Sans cette case, seul le nom de votre bureau sera cité.</small></label>
+  </div>
   <button class="bouton vert" type="submit">Envoyer ma remarque</button>
 </form>
 <script>

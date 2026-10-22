@@ -4,20 +4,20 @@
 <h1>Mes remarques</h1>
 {% if remarques %}
 <table>
-  <tr><th>N°</th><th>Date</th><th>Module</th><th>Remarque</th><th>Statut</th></tr>
+  <tr><th>N°</th><th>Date</th><th>Module</th><th>Remarque</th><th>Où en est-elle ?</th></tr>
   {% for r in remarques %}
   <tr>
     <td><a href="{% url 'remarques:detail' r.pk %}">{{ r.pk }}</a></td>
     <td>{{ r.created_at|date:"d/m/Y" }}</td>
     <td>{{ r.module }}</td>
     <td dir="auto"><a href="{% url 'remarques:detail' r.pk %}">{{ r.titre }}</a>
-      {% if r.reponse %}<br><small class="muet">Réponse disponible</small>{% endif %}</td>
+      {% if r.non_lue %}<span class="badge-nouveau">Nouvelle réponse</span>{% endif %}</td>
     <td><span class="etiquette st-{{ r.statut }}">{{ r.get_statut_display }}</span>
       {% if r.version_correction %}<br><small>Version {{ r.version_correction }}</small>{% endif %}</td>
   </tr>
   {% endfor %}
 </table>
 {% else %}
-<div class="carte">Vous n'avez pas encore envoyé de remarque. <a href="{% url 'remarques:nouvelle' %}">Écrire la première</a>.</div>
+<div class="carte">Vous n'avez pas encore envoyé de remarque. <a href="{% url 'remarques:nouvelle' %}">Écrire la première</a> : cela prend 30 secondes, et chaque remarque aide tous vos collègues.</div>
 {% endif %}
 {% endblock %}

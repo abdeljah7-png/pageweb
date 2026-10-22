@@ -1,0 +1,21 @@
+{% extends "remarques/base.html" %}
+{% block title %}Connexion : A3H{% endblock %}
+{% block entete %}{% endblock %}
+{% block content %}
+<div style="max-width:420px;margin:40px auto 0">
+  <div style="text-align:center;margin-bottom:18px">
+    <span class="marque" style="justify-content:center;color:var(--marine)"><span class="logo">A3H</span></span>
+    <h1 style="margin-top:12px">Connexion</h1>
+    <p class="sous">Application de calcul des impôts et des pénalités</p>
+  </div>
+  <form method="post" class="carte">
+    {% csrf_token %}
+    {% if form.errors %}<div class="message error">Nom d'utilisateur ou mot de passe incorrect.</div>{% endif %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="champ"><label for="{{ form.username.id_for_label }}">Nom d'utilisateur</label>{{ form.username }}</div>
+    <div class="champ"><label for="{{ form.password.id_for_label }}">Mot de passe</label>{{ form.password }}</div>
+    <button class="bouton" type="submit" style="width:100%">Se connecter</button>
+  </form>
+  <p class="muet" style="text-align:center">Après la connexion, vous pourrez signaler une erreur de calcul, un problème de formulaire ou une idée.</p>
+</div>
+{% endblock %}

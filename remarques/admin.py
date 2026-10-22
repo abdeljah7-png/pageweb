@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib import admin
+from django.utils import timezone
 from django.db.models import Count
 from django.http import HttpResponse
 from django.urls import reverse
@@ -55,7 +56,7 @@ def exporter_excel(modeladmin, request, queryset):
 
 @admin.action(description="Marquer comme étudiée")
 def marquer_etudiee(modeladmin, request, queryset):
-    queryset.filter(statut="nouvelle").update(statut="etudiee")
+    queryset.filter(statut="nouvelle").update(statut="etudiee", reponse_modifiee_le=timezone.now())
 
 
 @admin.action(description="Marquer comme cas de test")
@@ -79,12 +80,13 @@ class RemarqueAdmin(admin.ModelAdmin):
     list_select_related = ("bureau__centre", "module")
     autocomplete_fields = ("doublon_de",)
     actions = [exporter_excel, marquer_etudiee, marquer_cas_test]
-    readonly_fields = ("auteur", "nom_agent", "bureau", "created_at", "updated_at", "lien_capture")
+    readonly_fields = ("auteur", "nom_agent", "bureau", "accepte_credit", "created_at", "updated_at", "lien_capture")
     fieldsets = (
         ("Suivi : votre décision", {
-            "fields": ("statut", "reponse", "version_correction", "cas_de_test", "doublon_de", "note_interne"),
+            "fields": ("statut", "reponse", "version_correction", "resume_public",
+                       "cas_de_test", "doublon_de", "note_interne"),
         }),
-        ("Qui et quand", {"fields": ("auteur", "nom_agent", "bureau", "created_at", "updated_at")}),
+        ("Qui et quand", {"fields": ("auteur", "nom_agent", "bureau", "accepte_credit", "created_at", "updated_at")}),
         ("La remarque", {"fields": ("module", "type_remarque", "impact", "description")}),
         ("Calcul", {"classes": ("collapse",), "fields": (
             "code_impot", "periode", "regime", "valeurs_saisies",
@@ -95,6 +97,12 @@ class RemarqueAdmin(admin.ModelAdmin):
         ("Formulaire et divers", {"classes": ("collapse",), "fields": (
             "ecran", "version_a3h", "capture", "lien_capture")}),
     )
+
+    def save_model(self, request, obj, form, change):
+        # L'agent voit un badge « nouvelle réponse » dès que le statut ou la réponse change.
+        if change and {"statut", "reponse", "version_correction", "resume_public"} & set(form.changed_data):
+            obj.reponse_modifiee_le = timezone.now()
+        super().save_model(request, obj, form, change)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

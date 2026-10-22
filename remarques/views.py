@@ -1,8 +1,7 @@
-import json
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Count
+from django.db.models import Count, F, Prefetch, Q
+from django.utils import timezone
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -11,7 +10,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import ProfilForm, RemarqueForm
 from .models import (
-    STATUTS, TYPES, Bureau, MoiAussi, ProfilAgent, Remarque,
+    STATUTS, TYPES, Bureau, MoiAussi, ProfilAgent, Remarque, VersionA3H,
 )
 
 staff_requis = user_passes_test(lambda u: u.is_active and u.is_staff)
@@ -31,15 +30,116 @@ def _suite_sure(request, defaut):
     return defaut
 
 
+STATUTS_UTILES = ["planifiee", "corrigee"]
+
+# Une couleur par type, reprise des boutons d'A3H. Le texte aide l'agent à reconnaître son cas.
+TUILES = [
+    ("calcul", "#27ae60", "Un montant ne correspond pas à ce que vous attendiez."),
+    ("arrondi", "#3498db", "Un écart d'un millime ou d'un dinar sur une ligne ou un total."),
+    ("situation", "#f39c12", "Fermeture, cessation, décès : un cas que le calcul ne gère pas."),
+    ("formulaire", "#8e44ad", "Un champ, un libellé ou une impression à corriger."),
+    ("bug", "#c0392b", "Un plantage, un blocage ou une lenteur."),
+    ("idee", "#17a2a0", "Ce qui vous ferait gagner du temps."),
+]
+
+# Étapes de la frise d'avancement : statut -> (position atteinte, libellé de l'étape finale)
+ETAPES = {
+    "nouvelle": (0, "Terminée"),
+    "etudiee": (1, "Terminée"),
+    "reproduite": (1, "Terminée"),
+    "a_clarifier": (1, "Terminée"),
+    "planifiee": (2, "Terminée"),
+    "corrigee": (3, "Corrigée"),
+    "calcul_correct": (3, "Explication donnée"),
+    "refusee": (3, "Non retenue"),
+}
+
+
+def _frise(statut):
+    position, final = ETAPES.get(statut, (0, "Terminée"))
+    noms = ["Reçue", "Étudiée", "Planifiée", final]
+    sortie = []
+    for i, nom in enumerate(noms):
+        etat = "fait" if i < position else ("courant" if i == position else "a_venir")
+        if i == 3 and position == 3:
+            etat = "fait"
+        sortie.append({"nom": nom, "etat": etat})
+    return sortie
+
+
+def _non_lues(qs):
+    return qs.filter(reponse_modifiee_le__isnull=False).filter(
+        Q(vue_par_agent_le__isnull=True) | Q(vue_par_agent_le__lt=F("reponse_modifiee_le"))
+    )
+
+
+RETENUES = ("reproduite", "planifiee", "corrigee")
+
+
+def _stats_agent(user):
+    mes = Remarque.objects.filter(auteur=user)
+    total = mes.count()
+    traitees = mes.exclude(statut="nouvelle").count()
+    retenues = mes.filter(statut__in=RETENUES).count()
+    corrigees = mes.filter(statut="corrigee").count()
+    badges = [
+        {"titre": "Première remarque", "texte": "Vous avez pris la parole.", "ok": total >= 1},
+        {"titre": "Observateur attentif", "texte": "5 remarques envoyées.", "ok": total >= 5},
+        {"titre": "Œil de lynx", "texte": "Une de vos remarques a été retenue.", "ok": retenues >= 1},
+        {"titre": "A3H grâce à vous", "texte": "Une de vos remarques est corrigée dans A3H.", "ok": corrigees >= 1},
+    ]
+    if total == 0:
+        message = "Votre première remarque compte : chaque écart de calcul ou idée signalé rend A3H plus juste pour tous."
+    elif corrigees:
+        message = ("Une de vos remarques a déjà fait évoluer A3H. Bravo !" if corrigees == 1
+                   else "%d de vos remarques ont déjà fait évoluer A3H. Bravo !" % corrigees)
+    elif retenues:
+        message = ("Une de vos remarques a été retenue : elle est prise au sérieux." if retenues == 1
+                   else "Vos remarques sont prises au sérieux : %d ont été retenues." % retenues)
+    else:
+        message = "Vos remarques sont en cours d'étude. Vous serez informé ici dès qu'elles avancent."
+    return {
+        "nb_total": total, "nb_traitees": traitees, "nb_retenues": retenues,
+        "badges": badges, "nb_badges": sum(1 for b in badges if b["ok"]),
+        "message": message,
+    }
+
+
+def _apports(qs):
+    """Corrections citables : seulement celles qui ont un résumé public écrit par l'administrateur."""
+    return qs.filter(statut__in=STATUTS_UTILES).exclude(resume_public="").select_related("bureau")
+
+
 @login_required
 def accueil(request):
-    profil = _profil(request.user)
-    mes = Remarque.objects.filter(auteur=request.user)
-    return render(request, "remarques/accueil.html", {
-        "profil": profil,
-        "nb_total": mes.count(),
-        "nb_reponses": mes.exclude(statut="nouvelle").count(),
+    ctx = _stats_agent(request.user)
+    toutes = Remarque.objects.all()
+    libelles = dict(TYPES)
+    ctx.update({
+        "profil": _profil(request.user),
+        "nb_non_lues": _non_lues(Remarque.objects.filter(auteur=request.user)).count(),
+        "tuiles": [{"code": c, "titre": libelles[c], "couleur": col, "texte": t} for c, col, t in TUILES],
+        "apports": _apports(toutes).order_by("-updated_at")[:6],
+        "communaute": {
+            "remarques": toutes.count(),
+            "corrigees": toutes.filter(statut="corrigee").count(),
+            "agents": toutes.exclude(auteur=None).values("auteur").distinct().count(),
+        },
+        "derniere_version": VersionA3H.objects.first(),
     })
+    return render(request, "remarques/accueil.html", ctx)
+
+
+@login_required
+def nouveautes(request):
+    """Ce que les remarques ont changé, version par version. Seuls les résumés publics
+    écrits par l'administrateur sont montrés, jamais le texte brut d'un agent."""
+    versions = list(VersionA3H.objects.all())
+    for v in versions:
+        traitees = v.remarques_traitees.filter(statut="corrigee")
+        v.nb_traitees = traitees.count()
+        v.apports = _apports(traitees).order_by("pk")
+    return render(request, "remarques/nouveautes.html", {"versions": versions})
 
 
 @login_required
@@ -67,15 +167,20 @@ def nouvelle(request):
     if p is None:
         messages.info(request, "Avant votre première remarque, indiquez votre bureau (une seule fois).")
         return redirect("%s?next=%s" % (reverse("remarques:profil"), request.path))
-    form = RemarqueForm(
-        request.POST or None, request.FILES or None, initial={"nom_agent": p.nom_agent}
-    )
+    initial = {"nom_agent": p.nom_agent}
+    if request.GET.get("type") in dict(TYPES):  # tuile cliquée sur l'accueil
+        initial["type_remarque"] = request.GET["type"]
+    form = RemarqueForm(request.POST or None, request.FILES or None, initial=initial)
     if request.method == "POST" and form.is_valid():
         r = form.save(commit=False)
         r.auteur = request.user
         r.bureau = p.bureau
         r.save()
-        messages.success(request, "Merci ! Votre remarque n°%s est enregistrée." % r.pk)
+        messages.success(
+            request,
+            "Merci ! Votre remarque n°%s est enregistrée. Vous verrez ici même quand elle sera "
+            "étudiée : un badge « nouvelle réponse » vous préviendra." % r.pk,
+        )
         return redirect("remarques:detail", pk=r.pk)
     return render(request, "remarques/nouvelle.html", {"form": form})
 
@@ -94,8 +199,14 @@ def detail(request, pk):
     proprietaire = r.auteur_id == request.user.id
     if not (proprietaire or request.user.is_staff or r.type_remarque == "idee"):
         raise Http404
+    etait_non_lue = proprietaire and r.non_lue
+    if proprietaire and r.reponse_modifiee_le:
+        # update() pour ne pas toucher à « Mise à jour le »
+        Remarque.objects.filter(pk=r.pk).update(vue_par_agent_le=timezone.now())
     return render(request, "remarques/detail.html", {
         "r": r,
+        "frise": _frise(r.statut),
+        "etait_non_lue": etait_non_lue,
         "proprietaire": proprietaire,
         "voir_details": proprietaire or request.user.is_staff,
         "a_vote": r.moi_aussi.filter(user=request.user).exists(),

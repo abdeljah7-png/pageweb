@@ -1,1 +1,0 @@
-web: gunicorn 'a3h.wsgi'

@@ -44,12 +44,77 @@ class RemarquesTests(TestCase):
     def test_modules_par_defaut(self):
         self.assertGreaterEqual(Module.objects.count(), 15)
 
-    def test_pages_dans_le_gabarit_du_site(self):
+    def test_pages_autonomes_sans_gabarit_du_site(self):
         self.client.force_login(self.a)
-        for nom in ("accueil", "nouvelle", "mes", "idees", "profil"):
+        for nom in ("accueil", "nouvelle", "mes", "idees", "profil", "nouveautes"):
             page = self.client.get(reverse("remarques:" + nom)).content.decode()
-            self.assertIn("Accueil du site", page, nom)  # menu du base.html du site
-            self.assertIn("a3h-rem", page, nom)
+            self.assertIn("Remarques des agents", page, nom)   # en-tête propre au module
+            self.assertNotIn("Accueil du site", page, nom)      # ne dépend plus du base.html du site
+
+    def test_accueil_compteurs_et_nouveautes(self):
+        v = VersionA3H.objects.create(numero="2.5", notes="Correction des arrondis")
+        Remarque.objects.create(
+            auteur=self.a, nom_agent="Agent A", bureau=self.bureau, module=self.module,
+            type_remarque="arrondi", description="arrondi faux", statut="corrigee",
+            version_correction=v, resume_public="Arrondi au dinar corrigé sur le code 12040",
+            accepte_credit=True)
+        Remarque.objects.create(
+            auteur=self.b, nom_agent="Agent B", bureau=self.bureau2, module=self.module,
+            type_remarque="calcul", description="autre", statut="corrigee",
+            version_correction=v, resume_public="Total mensuel corrigé")
+        self.client.force_login(self.a)
+        page = self.client.get(reverse("remarques:accueil")).content.decode()
+        self.assertIn("Arrondi au dinar corrigé", page)
+        self.assertIn("Agent A, Bureau 1", page)       # crédité : accord donné
+        self.assertIn("Bureau Bureau 2", page)         # non crédité : bureau seulement
+        self.assertNotIn("Agent B", page.split("Ce qui a changé")[1])
+        self.assertIn("Merci Agent A", page)
+        nv = self.client.get(reverse("remarques:nouveautes")).content.decode()
+        self.assertIn("Version 2.5", nv)
+        self.assertIn("Correction des arrondis", nv)
+
+    def test_tuile_preselectionne_le_type(self):
+        self.client.force_login(self.a)
+        page = self.client.get(reverse("remarques:nouvelle") + "?type=arrondi").content.decode()
+        self.assertRegex(page, r'value="arrondi"\s+selected')
+
+    def test_badge_nouvelle_reponse_puis_lu(self):
+        r = Remarque.objects.create(auteur=self.a, nom_agent="A", bureau=self.bureau, module=self.module,
+                                    type_remarque="calcul", description="calcul faux")
+        self.client.force_login(self.admin)
+        champs = {"statut": "etudiee", "reponse": "Je regarde", "module": self.module.pk,
+                  "type_remarque": "calcul", "description": "calcul faux", "impact": "",
+                  "resume_public": "", "note_interne": ""}
+        self.client.post(reverse("admin:remarques_remarque_change", args=[r.pk]), champs)
+        r.refresh_from_db()
+        self.assertTrue(r.non_lue)
+        self.client.force_login(self.a)
+        self.assertIn("Nouvelle réponse", self.client.get(reverse("remarques:mes")).content.decode())
+        self.assertIn("1 nouvelle réponse", self.client.get(reverse("remarques:accueil")).content.decode())
+        self.client.get(reverse("remarques:detail", args=[r.pk]))   # l'agent lit
+        r.refresh_from_db()
+        self.assertFalse(r.non_lue)
+        self.assertNotIn("Nouvelle réponse", self.client.get(reverse("remarques:mes")).content.decode())
+
+    def test_frise_d_avancement(self):
+        from .views import _frise
+        self.assertEqual([e["etat"] for e in _frise("nouvelle")], ["courant", "a_venir", "a_venir", "a_venir"])
+        self.assertEqual([e["etat"] for e in _frise("planifiee")], ["fait", "fait", "courant", "a_venir"])
+        self.assertEqual([e["etat"] for e in _frise("corrigee")], ["fait", "fait", "fait", "fait"])
+
+    def test_connexion_et_deconnexion(self):
+        r = self.client.get("/")
+        self.assertRedirects(r, "/login/?next=/", fetch_redirect_response=False)
+        page = self.client.get("/login/").content.decode()
+        self.assertIn("Se connecter", page)
+        self.assertNotIn("Nouvelle remarque", page)          # pas de menu sur la page de connexion
+        mauvais = self.client.post("/login/", {"username": "agent_a", "password": "faux"})
+        self.assertContains(mauvais, "incorrect")
+        bon = self.client.post("/login/", {"username": "agent_a", "password": "x"})
+        self.assertRedirects(bon, "/", fetch_redirect_response=False)
+        self.assertEqual(self.client.get("/").status_code, 200)
+        self.client.post("/logout/")
+        self.assertEqual(self.client.get("/").status_code, 302)
 
     def test_acces_anonyme_refuse(self):
         for nom in ("accueil", "nouvelle", "mes", "idees", "profil"):
@@ -200,3 +265,20 @@ class RemarquesTests(TestCase):
                          {"action": "marquer_cas_test", "_selected_action": [r.pk]})
         r.refresh_from_db()
         self.assertTrue(r.cas_de_test)
+
+
+class InitAdminTests(TestCase):
+    def test_cree_le_compte_une_seule_fois_sans_toucher_au_mot_de_passe(self):
+        from io import StringIO
+        from unittest import mock
+        from django.core.management import call_command
+        env = {"A3H_ADMIN_USER": "chef2", "A3H_ADMIN_PASSWORD": "mdp-un"}
+        with mock.patch.dict("os.environ", env):
+            call_command("init_admin", stdout=StringIO())
+            u = User.objects.get(username="chef2")
+            self.assertTrue(u.is_superuser and u.check_password("mdp-un"))
+            with mock.patch.dict("os.environ", {"A3H_ADMIN_PASSWORD": "autre"}):
+                call_command("init_admin", stdout=StringIO())
+            u.refresh_from_db()
+            self.assertTrue(u.check_password("mdp-un"))   # jamais écrasé
+        call_command("init_admin", stdout=StringIO())      # sans variables : ne fait rien

@@ -2,6 +2,10 @@
 {% block title %}Remarque {{ r.pk }}{% endblock %}
 {% block content %}
 <h1>Remarque n°{{ r.pk }}</h1>
+{% if etait_non_lue %}<div class="alerte-reponse"><b>Nouvelle réponse</b> sur cette remarque : lisez-la plus bas.</div>{% endif %}
+{% if proprietaire %}
+<ol class="frise">{% for e in frise %}<li class="{{ e.etat }}">{{ e.nom }}</li>{% endfor %}</ol>
+{% endif %}
 <div class="carte">
   <p><span class="etiquette st-{{ r.statut }}">{{ r.get_statut_display }}</span>
      {% if r.version_correction %} Traitée dans la version <b>{{ r.version_correction }}</b>{% endif %}</p>

@@ -1,58 +1,150 @@
-{% extends "base.html" %}
-{# Les pages du module s'affichent dans le gabarit du site (bloc "principal"). #}
-{# Si le bloc de votre base.html porte un autre nom, changez-le ici (2 endroits). #}
-{% block principal %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}A3H : Remarques des agents{% endblock %}</title>
 <style>
-  .a3h-rem { max-width: 900px; margin: 0 auto; padding: 0 4px 30px; font-size: 16px; }
-  .a3h-rem .sousmenu { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 18px; padding: 8px; background: #eef2f6; border-radius: 8px; }
-  .a3h-rem .sousmenu a { padding: 5px 12px; border-radius: 6px; text-decoration: none; color: #1f2d3d; background: #fff; border: 1px solid #d8dee4; }
-  .a3h-rem .sousmenu a:hover { background: #cfe3f5; }
-  .a3h-rem h1 { font-size: 24px; margin: 8px 0 16px; }
-  .a3h-rem h2 { font-size: 18px; margin: 22px 0 8px; }
-  .a3h-rem .carte { background: #fff; border: 1px solid #d8dee4; border-radius: 8px; padding: 16px 18px; margin-bottom: 14px; }
-  .a3h-rem .champ { margin-bottom: 12px; }
-  .a3h-rem .champ label { display: block; font-weight: 600; margin-bottom: 4px; }
-  .a3h-rem .champ small { display: block; color: #5b6b79; margin-top: 3px; }
-  .a3h-rem input[type=text], .a3h-rem input[type=date], .a3h-rem select, .a3h-rem textarea, .a3h-rem input[type=file] { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #b7c2cc; border-radius: 5px; font-size: 16px; font-family: inherit; }
-  .a3h-rem textarea { resize: vertical; }
-  .a3h-rem .bouton { display: inline-block; background: #0d6efd; color: #fff; border: 0; padding: 10px 18px; border-radius: 6px; font-size: 16px; text-decoration: none; cursor: pointer; }
-  .a3h-rem .bouton.vert { background: #198754; }
-  .a3h-rem .bouton.gris { background: #6c757d; }
-  .a3h-rem .bouton.petit { padding: 5px 10px; font-size: 14px; }
-  .a3h-rem .errorlist { color: #b02a37; margin: 4px 0; padding: 0; list-style: none; }
-  .a3h-rem .message { padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; background: #d1e7dd; border: 1px solid #a3cfbb; }
-  .a3h-rem .message.info { background: #cff4fc; border-color: #9eeaf9; }
-  .a3h-rem .message.error { background: #f8d7da; border-color: #f1aeb5; }
-  .a3h-rem details { background: #fff; border: 1px solid #d8dee4; border-radius: 8px; padding: 10px 18px; margin: 14px 0; }
-  .a3h-rem summary { cursor: pointer; font-weight: 600; }
-  .a3h-rem fieldset { border: 1px dashed #b7c2cc; border-radius: 6px; margin: 12px 0; padding: 8px 14px; }
-  .a3h-rem legend { float: none; width: auto; font-size: 16px; font-weight: 600; padding: 0 6px; margin: 0; color: #1f2d3d; }
-  .a3h-rem table { border-collapse: collapse; width: 100%; background: #fff; }
-  .a3h-rem th, .a3h-rem td { border: 1px solid #d8dee4; padding: 7px 10px; text-align: left; vertical-align: top; }
-  .a3h-rem th { background: #eef2f6; }
-  .a3h-rem .etiquette { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 13px; background: #e2e8ee; }
-  .a3h-rem .st-nouvelle { background: #fff3cd; } .a3h-rem .st-corrigee, .a3h-rem .st-calcul_correct { background: #d1e7dd; }
-  .a3h-rem .st-refusee { background: #e2e3e5; } .a3h-rem .st-planifiee, .a3h-rem .st-reproduite { background: #cfe2ff; }
-  .a3h-rem .reponse { background: #e8f4ec; border-left: 4px solid #198754; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
-  .a3h-rem .avert { background: #fff3cd; border: 1px solid #ffe69c; padding: 8px 12px; border-radius: 6px; margin: 8px 0; font-size: 15px; }
-  .a3h-rem .grille { display: flex; flex-wrap: wrap; gap: 14px; }
-  .a3h-rem .grille > div { flex: 1 1 260px; }
-  .a3h-rem .chiffre { font-size: 30px; font-weight: 700; }
-  .a3h-rem .muet { color: #5b6b79; }
+  :root {
+    --encre: #16263a; --muet: #5d6c7b; --fond: #f3f1ec; --carte: #ffffff; --trait: #dcd8cf;
+    --marine: #14304f; --marine2: #1d4469; --ambre: #e0a23a; --vert: #1f8a5b; --bleu: #2563b8;
+    --rouge: #b3372f; --ombre: 0 1px 2px rgba(20,48,79,.08), 0 6px 18px rgba(20,48,79,.06);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fond); color: var(--encre); font: 16px/1.55 "Segoe UI", system-ui, -apple-system, Arial, sans-serif; }
+  a { color: var(--bleu); }
+  header.haut { background: linear-gradient(135deg, var(--marine), var(--marine2)); color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+  .haut-in { max-width: 1000px; margin: 0 auto; padding: 12px 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; }
+  .marque { display: flex; align-items: center; gap: 11px; color: #fff; text-decoration: none; }
+  .marque .logo { width: 38px; height: 38px; border-radius: 10px; background: var(--ambre); color: var(--marine); font-weight: 800; display: grid; place-items: center; letter-spacing: -1px; }
+  .marque b { font-size: 18px; line-height: 1.1; display: block; }
+  .marque small { color: #b9cde3; font-size: 12.5px; }
+  nav.menu { display: flex; flex-wrap: wrap; gap: 4px; margin-left: auto; align-items: center; }
+  nav.menu a, nav.menu button { color: #dbe8f5; text-decoration: none; padding: 7px 12px; border-radius: 8px; font-size: 15px; background: none; border: 0; cursor: pointer; font-family: inherit; }
+  nav.menu a:hover, nav.menu button:hover { background: rgba(255,255,255,.12); color: #fff; }
+  nav.menu a.cta { background: var(--ambre); color: var(--marine); font-weight: 700; }
+  nav.menu a.cta:hover { background: #efb64f; }
+  main { max-width: 1000px; margin: 0 auto; padding: 26px 18px 60px; }
+  h1 { font-size: 27px; margin: 4px 0 6px; letter-spacing: -.3px; }
+  h2 { font-size: 19px; margin: 28px 0 10px; }
+  .sous { color: var(--muet); margin: 0 0 18px; }
+  .muet { color: var(--muet); }
+  .carte { background: var(--carte); border: 1px solid var(--trait); border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; box-shadow: var(--ombre); }
+  .grille { display: flex; flex-wrap: wrap; gap: 14px; }
+  .grille > div { flex: 1 1 250px; }
+  .grille .carte { margin-bottom: 0; }
+
+  .hero { background: linear-gradient(135deg, #fff, #fbf3e1); border: 1px solid #ecd9ad; border-radius: 16px; padding: 24px 26px; margin-bottom: 18px; box-shadow: var(--ombre); }
+  .hero h1 { font-size: 29px; }
+  .hero p { margin: 8px 0 16px; max-width: 640px; }
+  .tuiles { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0 6px; }
+  .tuile { flex: 1 1 150px; background: var(--carte); border: 1px solid var(--trait); border-radius: 14px; padding: 14px 16px; box-shadow: var(--ombre); }
+  .chiffre { font-size: 34px; font-weight: 800; line-height: 1; color: var(--marine); }
+  .tuile .chiffre { margin-bottom: 4px; }
+  .tuile.or { background: #fff8e8; border-color: #ecd9ad; }
+  .tuile.or .chiffre { color: #a86d00; }
+  .badges { display: flex; flex-wrap: wrap; gap: 10px; }
+  .badge { flex: 1 1 200px; border: 1px solid var(--trait); border-radius: 12px; padding: 11px 14px; background: #faf9f6; color: #98a2ac; }
+  .badge b { display: block; font-size: 15px; }
+  .badge small { font-size: 13px; }
+  .badge::before { content: "☆ "; }
+  .badge.ok { background: #fff8e8; border-color: #ecd9ad; color: var(--encre); }
+  .badge.ok::before { content: "★ "; color: var(--ambre); }
+  .commun { background: var(--marine); color: #e6eef7; border-radius: 14px; padding: 18px 22px; display: flex; flex-wrap: wrap; gap: 14px 34px; align-items: center; }
+  .commun .chiffre { color: #fff; font-size: 30px; }
+  .commun small { display: block; color: #b9cde3; }
+  .commun p { margin: 0; flex: 1 1 100%; color: #cfe0f1; }
+
+  .bouton { display: inline-block; background: var(--bleu); color: #fff; border: 0; padding: 11px 20px; border-radius: 10px; font-size: 16px; font-weight: 600; text-decoration: none; cursor: pointer; font-family: inherit; }
+  .bouton:hover { filter: brightness(1.08); }
+  .bouton.vert { background: var(--vert); }
+  .bouton.gris { background: #6b7782; }
+  .bouton.petit { padding: 6px 12px; font-size: 14px; }
+  .bouton.ambre { background: var(--ambre); color: var(--marine); }
+
+  .champ { margin-bottom: 14px; }
+  .champ label { display: block; font-weight: 600; margin-bottom: 5px; }
+  .champ small { display: block; color: var(--muet); margin-top: 4px; font-size: 14px; }
+  input[type=text], input[type=password], input[type=date], select, textarea, input[type=file] { width: 100%; padding: 10px 11px; border: 1px solid #b9c2cb; border-radius: 9px; font-size: 16px; font-family: inherit; background: #fff; color: var(--encre); }
+  input:focus, select:focus, textarea:focus { outline: 3px solid #bcd5f5; border-color: var(--bleu); }
+  textarea { resize: vertical; }
+  .errorlist { color: var(--rouge); margin: 4px 0; padding: 0; list-style: none; font-size: 14.5px; }
+  details { background: var(--carte); border: 1px solid var(--trait); border-radius: 14px; padding: 12px 20px; margin: 16px 0; box-shadow: var(--ombre); }
+  summary { cursor: pointer; font-weight: 700; }
+  fieldset { border: 1px dashed #b9c2cb; border-radius: 10px; margin: 14px 0; padding: 8px 16px; }
+  legend { font-weight: 700; padding: 0 6px; color: var(--marine); }
+
+  .message { padding: 12px 16px; border-radius: 12px; margin-bottom: 14px; background: #dcf2e6; border: 1px solid #a9d9bf; font-weight: 500; }
+  .message.info { background: #dbeafb; border-color: #aecdf0; }
+  .message.error { background: #f8dcd9; border-color: #eab0aa; }
+  .avert { background: #fff3cd; border: 1px solid #ffe08a; padding: 10px 14px; border-radius: 10px; margin: 10px 0; font-size: 15px; }
+  .reponse { background: #e6f4ec; border-left: 5px solid var(--vert); padding: 12px 16px; margin: 14px 0; border-radius: 8px; }
+
+  table { border-collapse: collapse; width: 100%; background: #fff; border-radius: 10px; overflow: hidden; }
+  th, td { border: 1px solid var(--trait); padding: 8px 11px; text-align: left; vertical-align: top; }
+  th { background: #f1eee7; }
+  .etiquette { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 13px; background: #e7e4dc; }
+  .st-nouvelle { background: #fff0c2; } .st-corrigee, .st-calcul_correct { background: #cdeedc; }
+  .st-refusee { background: #e4e5e7; } .st-planifiee, .st-reproduite { background: #d3e4fb; }
+
+  .version { border-left: 4px solid var(--ambre); padding-left: 18px; margin: 0 0 26px 6px; }
+  .version h2 { margin-top: 0; }
+  .version li { margin: 6px 0; }
+  .mienne { background: #fff8e8; border-radius: 6px; padding: 1px 6px; font-weight: 600; }
+
+  /* Suivi, réponses et reconnaissance */
+  .frise { display: flex; list-style: none; padding: 0; margin: 0 0 16px; }
+  .frise li { flex: 1; text-align: center; padding: 9px 4px; font-size: 14px; background: #e7e4dc; color: #6b7782; }
+  .frise li:first-child { border-radius: 10px 0 0 10px; } .frise li:last-child { border-radius: 0 10px 10px 0; }
+  .frise li.fait { background: var(--vert); color: #fff; }
+  .frise li.courant { background: var(--ambre); color: var(--marine); font-weight: 700; }
+  .alerte-reponse { background: #fff3cd; border: 1px solid #ffe08a; border-left: 5px solid var(--ambre); padding: 12px 16px; border-radius: 10px; margin: 0 0 14px; }
+  .badge-nouveau { display: inline-block; background: var(--ambre); color: var(--marine); font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 10px; margin-left: 6px; }
+  .case-credit { display: flex; gap: 10px; align-items: flex-start; background: #fff; border: 1px solid var(--trait); border-radius: 12px; padding: 12px 16px; margin: 14px 0; }
+  .case-credit input { width: auto; margin-top: 6px; }
+  .changement { background: #fff; border: 1px solid var(--trait); border-left: 4px solid var(--vert); border-radius: 8px; padding: 8px 12px; margin: 8px 0; }
+  .changement small { display: block; color: var(--muet); }
+  .types { display: flex; flex-wrap: wrap; gap: 12px; }
+  .type-tuile { flex: 1 1 280px; display: block; text-decoration: none; color: var(--encre); background: var(--carte); border: 1px solid var(--trait); border-top: 6px solid var(--couleur, #888); border-radius: 12px; padding: 12px 16px; box-shadow: var(--ombre); }
+  .type-tuile:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(20,48,79,.13); }
+  .type-tuile b { display: block; color: var(--couleur, var(--marine)); }
+  .type-tuile span { color: var(--muet); font-size: 15px; }
+
+  footer { text-align: center; color: var(--muet); font-size: 14px; padding: 0 18px 30px; }
+  @media (max-width: 640px) { nav.menu { margin-left: 0; } h1 { font-size: 23px; } .hero { padding: 18px; } }
 </style>
-<div class="a3h-rem">
-  <div class="sousmenu">
-    <a href="{% url 'remarques:accueil' %}">Accueil remarques</a>
-    <a href="{% url 'remarques:nouvelle' %}">Nouvelle remarque</a>
-    <a href="{% url 'remarques:mes' %}">Mes remarques</a>
-    <a href="{% url 'remarques:idees' %}">Idées des collègues</a>
-    <a href="{% url 'remarques:profil' %}">Mon profil</a>
-    {% if user.is_staff %}
-      <a href="{% url 'remarques:tableau' %}">Tableau de bord</a>
-      <a href="{% url 'admin:remarques_remarque_changelist' %}">Administration</a>
-    {% endif %}
+</head>
+<body>
+{% block entete %}
+<header class="haut">
+  <div class="haut-in">
+    <a class="marque" href="{% url 'remarques:accueil' %}">
+      <span class="logo">A3H</span>
+      <span><b>Remarques des agents</b><small>Ensemble, rendons A3H plus juste</small></span>
+    </a>
+    <nav class="menu">
+      <a href="{% url 'remarques:accueil' %}">Accueil</a>
+      <a href="{% url 'remarques:mes' %}">Mes remarques</a>
+      <a href="{% url 'remarques:idees' %}">Idées des collègues</a>
+      <a href="{% url 'remarques:nouveautes' %}">Grâce à vous</a>
+      <a href="{% url 'remarques:profil' %}">Mon profil</a>
+      {% if user.is_staff %}
+        <a href="{% url 'remarques:tableau' %}">Tableau de bord</a>
+        <a href="{% url 'admin:remarques_remarque_changelist' %}">Administration</a>
+      {% endif %}
+      <a class="cta" href="{% url 'remarques:nouvelle' %}">+ Nouvelle remarque</a>
+      {% url 'logout' as url_sortie %}
+      {% if url_sortie and user.is_authenticated %}
+        <form method="post" action="{{ url_sortie }}" style="margin:0">{% csrf_token %}<button type="submit">Déconnexion</button></form>
+      {% endif %}
+    </nav>
   </div>
+</header>
+{% endblock %}
+<main>
   {% for m in messages %}<div class="message {{ m.tags }}">{{ m }}</div>{% endfor %}
   {% block content %}{% endblock %}
-</div>
-{% endblock %}
+</main>
+<footer>A3H · Application de calcul des impôts et des pénalités</footer>
+</body>
+</html>
